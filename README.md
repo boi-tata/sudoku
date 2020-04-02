@@ -1,6 +1,6 @@
 # Sudoku
 Sudoku é um jogo composto por uma matriz quadrada, possuindo tradicionalmente dimensão de 9x9. O objetivo do jogo é preencher esta matriz com números de 1 a 9, seguindo algumas regras préviamente estabelecidas.
-A matriz pode ser divida em 9 colunas, 9 linhas ou 9 submatrizes (de tamanho 3x3 cada), sendo que, no inicio, deve estar parcialmente preenchidas com alguns dos elementos que compõem o resultado.
+A matriz pode ser divida em 9 colunas, 9 linhas ou 9 submatrizes (não sobrepostas, de tamanho 3x3 cada), e deve estar parcialmente preenchidas com alguns dos elementos, que determinam uma ou mais soluções possíveis.
 
 ## 1. Regras do jogo
 1.1) Não podem haver números repetidos em uma linha
@@ -24,9 +24,11 @@ A matriz pode ser divida em 9 colunas, 9 linhas ou 9 submatrizes (de tamanho 3x3
 
 2.6) O arquivo deve conter ao menos uma linha
 
-## 3. Interpretação da entrada
+## 3. Regras de execução
 3.1) Caso o número de linhas seja diferente do número de colunas, a execução do programa deve ser interrompida
 
-3.2) Caso o número de colunas seja inconsistete entra as linhas, a execução do programa deve ser interrompida
+3.2) Caso o número de colunas seja inconsistente entra as linhas, a execução do programa deve ser interrompida
 
-3.3) Os valores a serem preenchidos fazem parte do período [1, n], sendo n a quantidade de colunas
+3.3) Os valores que compõem a solução fazem parte do período [1, n], sendo n a quantidade de colunas
+
+3.4) Deverá ser respeitado o item 1.3 apenas para matrizes onde é possível formar submatrizes quadradas não sobrepostas
