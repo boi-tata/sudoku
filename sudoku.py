@@ -11,7 +11,7 @@ class InvalidValue(SudokuException):
 
 
 class Sudoku:
-    """Class thats represent a Sudoku puzzle"""
+    """Class thats represent a Sudoku puzzle."""
 
     def __init__(self, source:str):
         with open(source) as f:
@@ -47,19 +47,19 @@ class Sudoku:
 
     
     def row(self, index:int) -> list:
-        """Return a list thats represents a row from given `index`"""
+        """Return a list thats represents a row from given `index`."""
         return self._matrix[index]
 
 
     def column(self, index:int) -> list:
-        """Return a list thats represents a column from given `index`"""
+        """Return a list thats represents a column from given `index`."""
         return [row[index] for row in self._matrix]
 
     
     def submatrix(self, x:int, y:int) -> list:
         """Return a list thats represents a submatrix thats contains the
         element from given index (x, y). If matrix hasn't submatrix, return
-        `None`"""
+        `None`."""
         if not self.has_submatrix:
             return
 
@@ -76,10 +76,11 @@ class Sudoku:
         # Flatten submatrix
         return [i for row in sub for i in row]
     
-
-    def set(self, x:int, y:int, value:int) -> bool:
+    
+    def set(self, x:int, y:int, value:int, only_check=False) -> bool:
         """If is possible, set `value` in given index (x, y) and return
-        `True`, else return `False`"""
+        `True`, else return `False`. If `only_check` is `True`, won't
+        assign `value` to the index."""
         if self.dimension < value < 0:
             raise InvalidValue('Value not allowed')
         
@@ -96,17 +97,18 @@ class Sudoku:
             if self.has_submatrix and value in self.submatrix(x, y):
                 return False
 
-        self._matrix[x][y] = value
+        if not only_check:
+            self._matrix[x][y] = value
         return True
 
     
     def get(self, x:int, y:int) -> int:
-        """Retrieves value in index (x, y)"""
+        """Retrieves value in index (x, y)."""
         return self._matrix[x][y]
 
 
     def solve(self):
-        """Solves the puzzle by brute force"""
+        """Solves the puzzle by brute force."""
         # Iterate over matrix
         for x in range(self.dimension):
             for y in range(self.dimension):
