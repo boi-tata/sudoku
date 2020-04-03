@@ -107,7 +107,7 @@ class Sudoku:
         return self._matrix[x][y]
 
 
-    def solve(self):
+    def solve_bf(self):
         """Solves the puzzle by brute force."""
         # Iterate over matrix
         for x in range(self.dimension):
