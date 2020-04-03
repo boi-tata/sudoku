@@ -105,6 +105,40 @@ class Sudoku:
         return self._matrix[x][y]
 
 
+    def solve(self):
+        """Solves the puzzle by brute force"""
+        # Iterate over matrix
+        for x in range(self.dimension):
+            for y in range(self.dimension):
+
+                # Skip not empty index
+                if self.get(x, y):
+                    continue
+
+                # Try to fit a number in index
+                for value in range(1, self.dimension + 1):
+
+                    # If not fit, try next number
+                    if not self.set(x, y, value):
+                        continue
+
+                    # Try to solve the new state of matrix. If `True` is
+                    # returned, so a solution has been finded. Else, the actual
+                    # state is part of wrong solution, and next number is tried.
+                    if self.solve():
+                        return True
+                
+                # If no number fits, previous state isn't part of solution. So,
+                # any change on actual state is undone, and we back to modify
+                # previous state
+                self.set(x, y, 0)
+                return False
+        
+        # When reached this line, the matrix has been filled, and a solution
+        # has been encoutered
+        return True
+
+
     def __str__(self):
         return '\n'.join(map(lambda l: ' '.join(map(str, l)), self._matrix))
 
