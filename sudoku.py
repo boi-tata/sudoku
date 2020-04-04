@@ -13,7 +13,7 @@ class InvalidValue(SudokuException):
 class Sudoku:
     """Class thats represent a Sudoku puzzle."""
 
-    def __init__(self, source:str):
+    def __init__(self, source:str, check_diagonal=False):
         with open(source) as f:
             raw = f.read()
         
@@ -44,6 +44,7 @@ class Sudoku:
 
         temp = sqrt(self.dimension)
         self.has_submatrix = int(temp) if (temp == int(temp)) else 0
+        self.check_diagonal = check_diagonal
 
     
     def row(self, index:int) -> list:
@@ -75,8 +76,22 @@ class Sudoku:
 
         # Flatten submatrix
         return [i for row in sub for i in row]
-    
-    
+
+
+    def diagonal(self, x:int, y:int) -> list:
+        """Return a list thats represents a diagonal thats contains the element
+        from given index (x, y). If matrix hasn't diagonal, or the index isn't
+        part of diagonal, return a empty list. If the index is part of two
+        diagonals, the list returned represents both diagonals."""
+        diag = []
+        if x == y:
+            diag += [self.get(i, i) for i in range(self.dimension)]
+        if (x + y) == (self.dimension - 1):
+            for i in range(self.dimension):
+                diag.append(self.get(i, self.dimension - (i + 1)))
+        return diag
+
+
     def set(self, x:int, y:int, value:int, only_check=False) -> bool:
         """If is possible, set `value` in given index (x, y) and return
         `True`, else return `False`. If `only_check` is `True`, won't
@@ -95,6 +110,9 @@ class Sudoku:
 
             # Item 3.4
             if self.has_submatrix and value in self.submatrix(x, y):
+                return False
+
+            if self.check_diagonal and value in self.diagonal(x, y):
                 return False
 
         if not only_check:
