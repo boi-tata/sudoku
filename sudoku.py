@@ -80,9 +80,9 @@ class Sudoku:
 
     def diagonal(self, x:int, y:int) -> list:
         """Return a list thats represents a diagonal thats contains the element
-        from given index (x, y). If matrix hasn't diagonal, or the index isn't
-        part of diagonal, return a empty list. If the index is part of two
-        diagonals, the list returned represents both diagonals."""
+        from given index (x, y). If the index isn't part of diagonal, return a
+        empty list. If the index is part of two diagonals, the list returned
+        represents both diagonals."""
         diag = []
         if x == y:
             diag += [self.get(i, i) for i in range(self.dimension)]
@@ -157,6 +157,33 @@ class Sudoku:
         # When reached this line, the matrix has been filled, and a solution
         # has been encoutered
         return True
+
+    
+    def solve_ce(self):
+        """Try to solve the puzzle by 'candidate elimination'."""
+        
+        def update(cands:dict):
+            changed = False
+            for index, cand in cands.items():
+                for i in cand:
+                    if not self.set(*index, i, True):
+                        cand.remove(i)
+                        changed = True
+                if len(cand) == 1:
+                    self.set(*index, cand[0])
+            return changed           
+        
+        candidates = {}
+        for x in range(self.dimension):
+            for y in range(self.dimension):
+                if not self.get(x, y):
+                    candidates[(x, y)] = [
+                        k for k in range(1, self.dimension + 1)
+                    ]
+        
+        while update(candidates):
+            pass
+        return not any(candidates.values())
 
 
     def __str__(self):
