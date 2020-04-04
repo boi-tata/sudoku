@@ -11,9 +11,9 @@ class InvalidValue(SudokuException):
 
 
 class Sudoku:
-    """Class thats represent a Sudoku puzzle"""
+    """Class thats represent a Sudoku puzzle."""
 
-    def __init__(self, source:str):
+    def __init__(self, source:str, check_diagonal=False):
         with open(source) as f:
             raw = f.read()
         
@@ -44,22 +44,23 @@ class Sudoku:
 
         temp = sqrt(self.dimension)
         self.has_submatrix = int(temp) if (temp == int(temp)) else 0
+        self.check_diagonal = check_diagonal
 
     
     def row(self, index:int) -> list:
-        """Return a list thats represents a row from given `index`"""
+        """Return a list thats represents a row from given `index`."""
         return self._matrix[index]
 
 
     def column(self, index:int) -> list:
-        """Return a list thats represents a column from given `index`"""
+        """Return a list thats represents a column from given `index`."""
         return [row[index] for row in self._matrix]
 
     
     def submatrix(self, x:int, y:int) -> list:
         """Return a list thats represents a submatrix thats contains the
         element from given index (x, y). If matrix hasn't submatrix, return
-        `None`"""
+        `None`."""
         if not self.has_submatrix:
             return
 
@@ -75,11 +76,26 @@ class Sudoku:
 
         # Flatten submatrix
         return [i for row in sub for i in row]
-    
 
-    def set(self, x:int, y:int, value:int) -> bool:
+
+    def diagonal(self, x:int, y:int) -> list:
+        """Return a list thats represents a diagonal thats contains the element
+        from given index (x, y). If matrix hasn't diagonal, or the index isn't
+        part of diagonal, return a empty list. If the index is part of two
+        diagonals, the list returned represents both diagonals."""
+        diag = []
+        if x == y:
+            diag += [self.get(i, i) for i in range(self.dimension)]
+        if (x + y) == (self.dimension - 1):
+            for i in range(self.dimension):
+                diag.append(self.get(i, self.dimension - (i + 1)))
+        return diag
+
+
+    def set(self, x:int, y:int, value:int, only_check=False) -> bool:
         """If is possible, set `value` in given index (x, y) and return
-        `True`, else return `False`"""
+        `True`, else return `False`. If `only_check` is `True`, won't
+        assign `value` to the index."""
         if self.dimension < value < 0:
             raise InvalidValue('Value not allowed')
         
@@ -96,17 +112,21 @@ class Sudoku:
             if self.has_submatrix and value in self.submatrix(x, y):
                 return False
 
-        self._matrix[x][y] = value
+            if self.check_diagonal and value in self.diagonal(x, y):
+                return False
+
+        if not only_check:
+            self._matrix[x][y] = value
         return True
 
     
     def get(self, x:int, y:int) -> int:
-        """Retrieves value in index (x, y)"""
+        """Retrieves value in index (x, y)."""
         return self._matrix[x][y]
 
 
-    def solve(self):
-        """Solves the puzzle by brute force"""
+    def solve_bf(self):
+        """Solves the puzzle by brute force."""
         # Iterate over matrix
         for x in range(self.dimension):
             for y in range(self.dimension):
@@ -125,7 +145,7 @@ class Sudoku:
                     # Try to solve the new state of matrix. If `True` is
                     # returned, so a solution has been finded. Else, the actual
                     # state is part of wrong solution, and next number is tried.
-                    if self.solve():
+                    if self.solve_bf():
                         return True
                 
                 # If no number fits, previous state isn't part of solution. So,
