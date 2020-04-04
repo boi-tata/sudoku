@@ -145,7 +145,7 @@ class Sudoku:
                     # Try to solve the new state of matrix. If `True` is
                     # returned, so a solution has been finded. Else, the actual
                     # state is part of wrong solution, and next number is tried.
-                    if self.solve():
+                    if self.solve_bf():
                         return True
                 
                 # If no number fits, previous state isn't part of solution. So,
