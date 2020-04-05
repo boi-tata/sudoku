@@ -163,26 +163,43 @@ class Sudoku:
         """Try to solve the puzzle by 'candidate elimination'."""
         
         def update(cands:dict):
+            """Verify all candidates for each index. Returns `True` if mapping
+            has modified, else returns `False`."""
             changed = False
+
+            # Iterate over indexes
             for index, cand in cands.items():
+
+                # Iterate over candidates of index
                 for i in cand:
+
+                    # If candidate isn't valid, remove it
                     if not self.set(*index, i, True):
                         cand.remove(i)
                         changed = True
+
+                # If exists only one candidate for a index, this is the answer
+                # for this index
                 if len(cand) == 1:
                     self.set(*index, cand[0])
             return changed           
         
+        # Generating a mapping of candidates for each empty index
         candidates = {}
         for x in range(self.dimension):
             for y in range(self.dimension):
+
+                # If the index is empty, add all possible numbers as candidates
                 if not self.get(x, y):
                     candidates[(x, y)] = [
                         k for k in range(1, self.dimension + 1)
                     ]
-        
+
+        # While candidates have been affected by previous changes, keep
+        # updating
         while update(candidates):
             pass
+
         return not any(candidates.values())
 
 
